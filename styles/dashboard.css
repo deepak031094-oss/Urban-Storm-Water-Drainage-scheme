@@ -1,0 +1,299 @@
+/* Color Variables */
+:root {
+    --header-bg: #1a5276;
+    --progress-bg: #f8f9fa;
+    --progress-bar: #28a745;
+    --yellow: #ffc107;
+    --orange: #fd7e14;
+    --brown: #795548;
+    --pink: #e83e8c;
+    --light-blue: #17a2b8;
+    --green: #28a745;
+    --red: #dc3545;
+    --purple: #6f42c1;
+    --blue: #007bff;
+    --dark-green: #218838;
+    --footer-bg: #1a5276;
+    --text-light: #f8f9fa;
+    --text-muted: #6c757d;
+    --transition: all 0.3s ease;
+}
+
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Main Content */
+.dashboard-main {
+    flex: 1;
+    padding: 2rem 0;
+    background-color: #fff;
+    margin-top: 70px; /* Account for fixed header */
+    margin-bottom: 40px; /* Space before footer */
+}
+
+/* Container adjustments */
+.container, .container-fluid {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+/* Card styles */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+    transition: var(--transition);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: var(--header-bg);
+    color: white;
+    font-weight: 600;
+    border-bottom: none;
+    padding: 1rem 1.25rem;
+}
+
+/* Button styles */
+.btn {
+    border-radius: 4px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.btn-primary {
+    background-color: var(--header-bg);
+    border-color: var(--header-bg);
+}
+
+.btn-primary:hover {
+    background-color: #154360;
+    border-color: #154360;
+    transform: translateY(-2px);
+}
+
+/* Form controls */
+.form-control {
+    border-radius: 4px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ced4da;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    border-color: var(--header-bg);
+    box-shadow: 0 0 0 0.2rem rgba(26, 82, 118, 0.25);
+}
+
+/* Table styles */
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background-color: var(--header-bg);
+    color: white;
+    border-bottom: none;
+    padding: 1rem;
+    font-weight: 500;
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-color: #f0f0f0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dashboard-main {
+        margin-top: 60px;
+        padding: 1rem 0;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .container, .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* Header Styles */
+.dashboard-header {
+    background-color: var(--header-bg);
+    color: white;
+    padding: 1rem 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.dashboard-header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0 15px;
+}
+
+/* Progress Section */
+.progress-section {
+    background-color: white;
+    border-bottom: 1px solid #e0e0e0;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 0.5rem 0;
+}
+
+.progress-container {
+    max-width: 100%;
+    padding: 0 1.5rem;
+}
+
+.progress {
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.progress-bar {
+    background-color: var(--progress-bar);
+    transition: width 0.6s ease;
+}
+
+/* Dashboard Buttons */
+.dashboard-btn {
+    background-color: white;
+    border-radius: 12px;
+    padding: 25px 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.dashboard-btn:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-btn:hover::before {
+    opacity: 1;
+}
+
+.dashboard-btn span {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: block;
+    position: relative;
+    z-index: 1;
+}
+
+.dashboard-btn .btn-icon {
+    font-size: 2.8rem;
+    margin-top: 12px;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.dashboard-btn:hover .btn-icon {
+    transform: scale(1.1);
+    font-size: 1.5rem;
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    opacity: 0.7;
+}
+
+/* Button Color Classes */
+.bg-yellow { background-color: var(--yellow); }
+.bg-orange { background-color: var(--orange); }
+.bg-brown { background-color: var(--brown); color: white; }
+.bg-pink { background-color: #f8bbd0; }
+.bg-light-blue { background-color: #b3e5fc; }
+.bg-green { background-color: #c8e6c9; }
+.bg-red { background-color: #ffcdd2; }
+.bg-purple { background-color: #e1bee7; }
+.bg-blue { background-color: #bbdefb; }
+.bg-dark-green { background-color: #a5d6a7; }
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .dashboard-header h1 {
+        font-size: 1.2rem;
+    }
+    
+    .dashboard-btn {
+        padding: 1rem;
+    }
+    
+    .btn-icon {
+        font-size: 1.2rem;
+    }
+}
+
+/* Animation for buttons */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-btn {
+    animation: fadeIn 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+/* Add delay for each button */
+.dashboard-btn:nth-child(1) { animation-delay: 0.1s; }
+.dashboard-btn:nth-child(2) { animation-delay: 0.2s; }
+.dashboard-btn:nth-child(3) { animation-delay: 0.3s; }
+.dashboard-btn:nth-child(4) { animation-delay: 0.4s; }
+/* Add more if needed */
