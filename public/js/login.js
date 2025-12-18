@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     
     if (!loginForm) {
-        console.error('Login form not found.');
+        console.error('Login form not found!git');
         return;
     }
 
