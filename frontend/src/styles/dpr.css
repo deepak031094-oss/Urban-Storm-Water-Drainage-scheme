@@ -1,0 +1,54 @@
+.dpr-upload-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  }
+  
+  .upload-area {
+    border: 2px dashed #1a5276;
+    border-radius: 8px;
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 1.5rem 0;
+    background: rgba(26, 82, 118, 0.05);
+  }
+  .upload-area:hover {
+    background: rgba(26, 82, 118, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  .file-info {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #1a5276;
+  }
+  
+  .btn-upload {
+    background: #1a5276;
+    color: white;
+    padding: 0.6rem 2.5rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  .btn-upload:hover {
+    background: #154360;
+    transform: translateY(-2px);
+  }
+  .btn-upload:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+  }
+  
+  .recent-uploads {
+    margin-top: 2rem;
+  }
+  

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/urban-storm', {
+mongoose.connect('mongodb://mongo:27017/urban_storm_portal', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(async () => {
@@ -35,7 +35,7 @@ mongoose.connect('mongodb://localhost:27017/urban-storm', {
   try {
     // Check if admin exists
     const existingAdmin = await User.findOne({ username: 'admin' });
-    
+    console.log("existingAdmin===", existingAdmin)
     if (!existingAdmin) {
       // Create new admin
       const admin = new User(adminUser);
