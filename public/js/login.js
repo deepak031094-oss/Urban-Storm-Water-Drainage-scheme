@@ -2,16 +2,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     
     if (!loginForm) {
-        console.error('Login form not found!git');
+        console.error('Login form not found!');
         return;
+    }
+
+    // Check if already logged in
+    const token = localStorage.getItem('token');
+    if (token) {
+        // Verify token and redirect if valid
+        checkAuthStatus();
     }
 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const username = document.getElementById('username').value;
+        const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
         const loginButton = loginForm.querySelector('button[type="submit"]');
+        
+        if (!username || !password) {
+            alert('Please enter both username and password');
+            return;
+        }
         
         // Show loading state
         const originalButtonText = loginButton.innerHTML;
@@ -20,33 +32,69 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             console.log('Attempting login with:', { username });
-            const response = await fetch('/api/login', {
+            const apiUrl = 'http://localhost:3000/api/auth/login';
+            console.log('Calling API:', apiUrl);
+            
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({ username, password }),
+                credentials: 'include' // Important for cookies/sessions if used
             });
             
-            const data = await response.json();
-            console.log('Login response:', { status: response.status, data });
+            console.log('Response status:', response.status);
             
-            if (response.ok) {
-                // Store the token in localStorage
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error('Login error response:', errorData);
+                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('Login successful, response data:', data);
+            
+            if (data.token) {
                 localStorage.setItem('token', data.token);
-                console.log('Login successful, redirecting to dashboard...');
-                // Redirect to dashboard
+                console.log('Token stored, redirecting to dashboard...');
                 window.location.href = '/dashboard.html';
             } else {
-                throw new Error(data.message || 'Invalid credentials');
+                throw new Error('No token received from server');
             }
+            
         } catch (error) {
             console.error('Login error:', error);
-            alert(error.message || 'Login failed. Please check your credentials and try again.');
+            alert(`Login failed: ${error.message || 'Please check your credentials and try again.'}`);
         } finally {
-            // Reset button state
             loginButton.disabled = false;
             loginButton.innerHTML = originalButtonText;
         }
     });
 });
+
+async function checkAuthStatus() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    try {
+        const response = await fetch('http://localhost:5000/api/check-auth', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json'
+            },
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.isAuthenticated) {
+                window.location.href = '/dashboard.html';
+            }
+        }
+    } catch (error) {
+        console.error('Auth check failed:', error);
+        localStorage.removeItem('token');
+    }
+}

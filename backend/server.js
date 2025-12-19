@@ -5,6 +5,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
+const dprRoutes = require('./routes/dpr');
 const { createDefaultUser } = require('./models/User');
 
 // Initialize express app
@@ -24,52 +25,64 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/urban-sto
 
 // Middleware
 const corsOptions = {
-  origin: 'http://localhost:5000',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    // List of allowed origins
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://127.0.0.1:3000'
+    ];
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    
+    return callback(null, true);
+  },
   credentials: true,
-  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
-
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-// Handle preflight requests
-app.options('*', cors(corsOptions));
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api', dprRoutes);
 
-// Serve static files from the frontend
-app.use(express.static(path.join(__dirname, '../')));
-app.use('/public', express.static(path.join(__dirname, '../public')));
+// Serve static files from the project root
+app.use(express.static(path.join(__dirname, '..')));
 
-// API Routes
-app.use(authRoutes);
-
-// Simple test route
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'API is working!' });
-});
-
-// Serve dashboard
-app.get('/dashboard', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../dashboard.html'));
-});
-
-// All other GET requests not handled before will return the React app
+// Handle routing, return all requests to index.html
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../index.html'));
+  res.sendFile(path.join(__dirname, '../index.html'));
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!' });
+  res.status(500).json({ 
+    success: false,
+    error: 'Something broke!',
+    message: err.message 
+  });
 });
 
 // Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 3000;
+const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`Frontend available at http://localhost:${PORT}`);
-  console.log(`API available at http://localhost:${PORT}/api/test`);
 });
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection:', err);
+  server.close(() => process.exit(1));
+});
+
+module.exports = app;

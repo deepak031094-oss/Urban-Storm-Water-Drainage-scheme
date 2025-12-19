@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DPR Upload - Urban Storm Water Drainage Scheme</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles/header-footer.css">
+    <style>
+        .dpr-upload-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .upload-area {
+            border: 2px dashed #1a5276;
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1.5rem 0;
+            background: rgba(26, 82, 118, 0.05);
+        }
+        .upload-area:hover {
+            background: rgba(26, 82, 118, 0.1);
+            transform: translateY(-2px);
+        }
+        .file-info {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #1a5276;
+        }
+        .btn-upload {
+            background: #1a5276;
+            color: white;
+            padding: 0.6rem 2.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-upload:hover {
+            background: #154360;
+            transform: translateY(-2px);
+        }
+        .btn-upload:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        .recent-uploads {
+            margin-top: 2rem;
+        }
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+            min-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="container-fluid">
+            <div class="header-container">
+                <div class="logo-container">
+                    <img src="/public/Images/LOGO .jpg" alt="Uttar Pradesh Government Logo">
+                    <div class="site-title">
+                        <h1>Urban Storm Water Drainage Scheme</h1>
+                    </div>
+                </div>
+                <nav class="main-nav">
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="dashboard.html" class="nav-link">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="dpr-upload.html" class="nav-link active">DPR Upload</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">Reports</a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="user-menu">
+                    <a href="#" id="directLogout" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                    <div class="user-avatar" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="d-flex align-items-center user-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span>Admin</span>
+                        <i class="fas fa-chevron-down ms-1"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dpr-upload-container">
+            <h2 class="mb-4"><i class="fas fa-file-excel me-2"></i>Daily Progress Report (DPR) Upload</h2>
+            
+            <div id="uploadArea" class="upload-area">
+                <i class="fas fa-cloud-upload-alt fa-3x mb-3" style="color: #1a5276;"></i>
+                <h5>Drag & Drop your DPR Excel file here</h5>
+                <p class="text-muted">or</p>
+                <button class="btn btn-outline-primary" id="browseBtn">
+                    <i class="fas fa-folder-open me-2"></i>Browse Files
+                </button>
+                <input type="file" id="fileInput" accept=".xlsx, .xls" style="display: none;">
+            </div>
+
+            <div id="fileInfo" class="file-info" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-file-excel me-2"></i>
+                        <span id="fileName">filename.xlsx</span>
+                        <small class="text-muted ms-2" id="fileSize">0 KB</small>
+                    </div>
+                    <button class="btn btn-sm btn-outline-danger" id="removeFile">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="progress mt-2" style="height: 5px;">
+                    <div id="uploadProgress" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button id="uploadBtn" class="btn-upload" disabled>
+                    <i class="fas fa-upload me-2"></i>Upload DPR
+                </button>
+                <button class="btn btn-outline-secondary ms-2" id="downloadTemplate">
+                    <i class="fas fa-download me-2"></i>Download Template
+                </button>
+            </div>
+
+            <div class="recent-uploads mt-5">
+                <h5><i class="fas fa-history me-2"></i>Recent DPR Uploads</h5>
+                <div class="list-group" id="recentUploads">
+                    <div class="text-muted text-center py-4">No recent uploads</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+        <div class="container-fluid">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h6>Quick Links</h6>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h6>Contact Us</h6>
+                    <p>Email: info@urbanstormportal.gov.in</p>
+                    <p>Phone: +91-XXX-XXXXXXX</p>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 Urban Storm Water Drainage Scheme. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const browseBtn = document.getElementById('browseBtn');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const uploadProgress = document.getElementById('uploadProgress');
+            const removeFileBtn = document.getElementById('removeFile');
+            const recentUploads = document.getElementById('recentUploads');
+            const downloadTemplate = document.getElementById('downloadTemplate');
+            
+            // State
+            let currentFile = null;
+            const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+            const ALLOWED_EXTENSIONS = ['.xlsx', '.xls'];
+            const API_BASE_URL = 'http://localhost:3000/api';
+
+            // DPR Template structure for reference
+            const dprTemplateStructure = {
+                'Project Information': ['Project Name', 'Location', 'Reporting Period', 'Prepared By', 'Designation', 'Date'],
+                'Daily Progress Summary': ['Date', 'Work Description', 'Location', 'Planned Qty', 'Completed Qty', 'Unit', 'Progress (%)', 'Remarks'],
+                'Manpower Details': ['Date', 'Skilled Workers', 'Unskilled Workers', 'Supervisors', 'Engineers', 'Total'],
+                'Equipment Details': ['Date', 'Equipment Type', 'Number of Units', 'Hours Worked', 'Status', 'Remarks'],
+                'Material Details': ['Date', 'Material', 'Unit', 'Planned', 'Used', 'Balance', 'Remarks']
+            };
+
+            let selectedFile = null;
+
+            // Handle drag and drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                uploadArea.classList.add('border-primary');
+                uploadArea.style.borderWidth = '3px';
+            }
+
+            function unhighlight() {
+                uploadArea.classList.remove('border-primary');
+                uploadArea.style.borderWidth = '2px';
+            }
+
+            // Handle dropped files
+            uploadArea.addEventListener('drop', handleDrop, false);
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+
+            // Handle file selection via browse button
+            browseBtn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+            // Handle file selection
+            async function handleFiles(files) {
+                if (files.length === 0) return;
+                
+                const file = files[0];
+                
+                // Validate file type
+                const validTypes = [
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'application/vnd.ms-excel',
+                    'application/octet-stream' // For some Excel files
+                ];
+                const fileExt = file.name.split('.').pop().toLowerCase();
+                
+                if (!validTypes.includes(file.type) && !['xlsx', 'xls'].includes(fileExt)) {
+                    showAlert('Please upload a valid Excel file (.xlsx or .xls)', 'danger');
+                    return;
+                }
+                
+                // Validate file size (10MB max)
+                const maxSize = 10 * 1024 * 1024; // 10MB
+                if (file.size > maxSize) {
+                    showAlert('File size exceeds 10MB limit', 'danger');
+                    return;
+                }
+                
+                selectedFile = file;
+                updateFileInfo();
+                
+                try {
+                    // Show loading state
+                    showPreviewLoading();
+                    
+                    // Read and validate the Excel file
+                    const data = await readExcelFile(file);
+                    displayFilePreview(data);
+                    
+                } catch (error) {
+                    console.error('Error processing file:', error);
+                    showAlert('Error processing file. Please check the file format and try again.', 'danger');
+                }
+            }
+            
+            // Show loading state for file preview
+            function showPreviewLoading() {
+                const previewContainer = document.createElement('div');
+                previewContainer.id = 'filePreview';
+                previewContainer.className = 'mt-4';
+                previewContainer.innerHTML = `
+                    <div class="d-flex align-items-center text-muted">
+                        <div class="spinner-border spinner-border-sm me-2" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        Analyzing DPR file...
+                    </div>
+                `;
+                
+                // Remove existing preview if any
+                const existingPreview = document.getElementById('filePreview');
+                if (existingPreview) {
+                    existingPreview.remove();
+                }
+                
+                fileInfo.after(previewContainer);
+            }
+            
+            // Helper function to read Excel file
+            function readExcelFile(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        try {
+                            const data = new Uint8Array(e.target.result);
+                            const workbook = XLSX.read(data, { type: 'array' });
+                            const result = {};
+                            
+                            // Process each sheet
+                            workbook.SheetNames.forEach(sheetName => {
+                                const worksheet = workbook.Sheets[sheetName];
+                                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+                                
+                                if (jsonData.length > 0) {
+                                    const headers = jsonData[0];
+                                    const rows = jsonData.slice(1).map(row => {
+                                        const obj = {};
+                                        headers.forEach((header, index) => {
+                                            obj[header] = row[index] !== undefined ? row[index] : '';
+                                        });
+                                        return obj;
+                                    });
+                                    result[sheetName] = {
+                                        headers: headers,
+                                        data: rows,
+                                        rowCount: rows.length
+                                    };
+                                } else {
+                                    result[sheetName] = { headers: [], data: [], rowCount: 0 };
+                                }
+                            });
+                            
+                            resolve(result);
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+                    
+                    reader.onerror = () => {
+                        reject(new Error('Error reading file'));
+                    };
+                    
+                    reader.readAsArrayBuffer(file);
+                });
+            }
+            
+            // Display file preview
+            function displayFilePreview(data) {
+                const previewContainer = document.createElement('div');
+                previewContainer.id = 'filePreview';
+                previewContainer.className = 'mt-4';
+                
+                // Check for required sheets
+                const requiredSheets = ['Project Information', 'Daily Progress Summary', 'Manpower Details'];
+                const missingSheets = requiredSheets.filter(sheet => !data[sheet]);
+                
+                if (missingSheets.length > 0) {
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-warning';
+                    alertDiv.innerHTML = `
+                        <h5><i class="fas fa-exclamation-triangle me-2"></i>Missing Required Sheets</h5>
+                        <p>The following required sheets are missing: <strong>${missingSheets.join(', ')}</strong></p>
+                        <p class="mb-0">Please use the provided DPR template to ensure all required sheets are included.</p>
+                    `;
+                    previewContainer.appendChild(alertDiv);
+                    uploadBtn.disabled = true;
+                } else {
+                    // Show validation success
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-success';
+                    alertDiv.innerHTML = `
+                        <h5><i class="fas fa-check-circle me-2"></i>File Validated</h5>
+                        <p class="mb-0">DPR file structure is valid. You can now upload the file.</p>
+                    `;
+                    previewContainer.appendChild(alertDiv);
+                    uploadBtn.disabled = false;
+                }
+                
+                // Show sheet summaries
+                Object.entries(data).forEach(([sheetName, sheetData]) => {
+                    const sheetCard = document.createElement('div');
+                    sheetCard.className = 'card mb-3';
+                    
+                    const cardHeader = document.createElement('div');
+                    cardHeader.className = 'card-header d-flex justify-content-between align-items-center';
+                    cardHeader.innerHTML = `
+                        <span>${sheetName} <span class="badge bg-secondary">${sheetData.rowCount} rows</span></span>
+                        <button class="btn btn-sm btn-outline-primary toggle-sheet" data-sheet="${sheetName}">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    `;
+                    
+                    const cardBody = document.createElement('div');
+                    cardBody.className = 'card-body d-none';
+                    cardBody.id = `sheet-${sheetName}`;
+                    
+                    if (sheetData.rowCount > 0) {
+                        const table = document.createElement('table');
+                        table.className = 'table table-sm table-bordered table-hover';
+                        
+                        // Create table header
+                        const thead = document.createElement('thead');
+                        const headerRow = document.createElement('tr');
+                        sheetData.headers.forEach(header => {
+                            const th = document.createElement('th');
+                            th.textContent = header || '[Empty Header]';
+                            headerRow.appendChild(th);
+                        });
+                        thead.appendChild(headerRow);
+                        
+                        // Create table body (limit to 5 rows)
+                        const tbody = document.createElement('tbody');
+                        const rowCount = Math.min(5, sheetData.data.length);
+                        
+                        for (let i = 0; i < rowCount; i++) {
+                            const row = document.createElement('tr');
+                            sheetData.headers.forEach(header => {
+                                const td = document.createElement('td');
+                                const value = sheetData.data[i][header];
+                                td.textContent = value !== undefined && value !== null ? value : '';
+                                if (value === '') {
+                                    td.classList.add('table-warning');
+                                    td.title = 'Empty cell';
+                                }
+                                row.appendChild(td);
+                            });
+                            tbody.appendChild(row);
+                        }
+                        
+                        table.appendChild(thead);
+                        table.appendChild(tbody);
+                        cardBody.appendChild(table);
+                        
+                        // Show row count info
+                        if (sheetData.data.length > 5) {
+                            const infoDiv = document.createElement('div');
+                            infoDiv.className = 'text-muted small mt-2';
+                            infoDiv.textContent = `Showing 5 of ${sheetData.data.length} rows`;
+                            cardBody.appendChild(infoDiv);
+                        }
+                    } else {
+                        cardBody.innerHTML = '<div class="text-muted">No data available</div>';
+                    }
+                    
+                    sheetCard.appendChild(cardHeader);
+                    sheetCard.appendChild(cardBody);
+                    previewContainer.appendChild(sheetCard);
+                });
+                
+                // Toggle sheet visibility
+                previewContainer.addEventListener('click', (e) => {
+                    if (e.target.closest('.toggle-sheet')) {
+                        const button = e.target.closest('.toggle-sheet');
+                        const sheetName = button.dataset.sheet;
+                        const sheetBody = document.getElementById(`sheet-${sheetName}`);
+                        const icon = button.querySelector('i');
+                        
+                        if (sheetBody.classList.contains('d-none')) {
+                            sheetBody.classList.remove('d-none');
+                            icon.classList.replace('fa-chevron-right', 'fa-chevron-down');
+                        } else {
+                            sheetBody.classList.add('d-none');
+                            icon.classList.replace('fa-chevron-down', 'fa-chevron-right');
+                        }
+                    }
+                });
+                
+                // Replace existing preview
+                const existingPreview = document.getElementById('filePreview');
+                if (existingPreview) {
+                    existingPreview.replaceWith(previewContainer);
+                } else {
+                    fileInfo.after(previewContainer);
+                }
+            }
+
+            // Update file info display
+            function updateFileInfo() {
+                if (selectedFile) {
+                    fileName.textContent = selectedFile.name;
+                    fileSize.textContent = formatFileSize(selectedFile.size);
+                    fileInfo.style.display = 'block';
+                    uploadBtn.disabled = false;
+                } else {
+                    fileInfo.style.display = 'none';
+                    uploadBtn.disabled = true;
+                }
+            }
+
+            // Format file size
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            // Handle file upload
+            uploadBtn.addEventListener('click', uploadFile);
+            function uploadFile() {
+                if (!selectedFile) return;
+
+                const formData = new FormData();
+                formData.append('dprFile', selectedFile);
+                formData.append('uploadDate', new Date().toISOString());
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/upload/dpr', true);
+
+                xhr.upload.onprogress = function(e) {
+                    if (e.lengthComputable) {
+                        const percentComplete = (e.loaded / e.total) * 100;
+                        uploadProgress.style.width = percentComplete + '%';
+                    }
+                };
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        showAlert('DPR uploaded successfully!', 'success');
+                        addToRecentUploads(response);
+                    } else {
+                        showAlert('Error uploading file. Please try again.', 'danger');
+                    }
+                    resetUploader();
+                };
+
+                xhr.onerror = function() {
+                    showAlert('Error uploading file. Please check your connection and try again.', 'danger');
+                    resetUploader();
+                };
+
+                xhr.send(formData);
+                uploadBtn.disabled = true;
+                uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+            }
+
+            // Show alert message
+            function showAlert(message, type) {
+                // Remove any existing alerts
+                const existingAlert = document.querySelector('.alert');
+                if (existingAlert) {
+                    existingAlert.remove();
+                }
+
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+                alertDiv.role = 'alert';
+                alertDiv.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                document.body.appendChild(alertDiv);
+                
+                // Auto-remove alert after 5 seconds
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
+                }, 5000);
+            }
+
+            // Remove selected file
+            removeFileBtn.addEventListener('click', resetUploader);
+
+            function resetUploader() {
+                selectedFile = null;
+                fileInput.value = '';
+                fileInfo.style.display = 'none';
+                uploadBtn.disabled = true;
+                uploadBtn.innerHTML = '<i class="fas fa-upload me-2"></i>Upload DPR';
+                uploadProgress.style.width = '0%';
+            }
+
+            // Add to recent uploads
+            function addToRecentUploads(fileData) {
+                const uploadTime = new Date(fileData.uploadedAt).toLocaleString();
+                const uploadItem = document.createElement('a');
+                uploadItem.href = '#';
+                uploadItem.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center';
+                uploadItem.innerHTML = `
+                    <div>
+                        <i class="fas fa-file-excel text-success me-2"></i>
+                        <span>${fileData.originalname}</span>
+                        <small class="text-muted ms-2">${formatFileSize(fileData.size)}</small>
+                    </div>
+                    <div class="text-muted small">${uploadTime}</div>
+                `;
+                
+                // If "No recent uploads" message exists, remove it
+                const noUploadsMsg = recentUploads.querySelector('.text-muted.text-center');
+                if (noUploadsMsg) {
+                    recentUploads.removeChild(noUploadsMsg);
+                }
+                
+                // Add new upload to the top
+                if (recentUploads.firstChild) {
+                    recentUploads.insertBefore(uploadItem, recentUploads.firstChild);
+                } else {
+                    recentUploads.appendChild(uploadItem);
+                }
+            }
+
+            // Download template
+            downloadTemplate.addEventListener('click', function() {
+                showAlert('Preparing template download...', 'info');
+                
+                try {
+                    // Create a new workbook
+                    const wb = XLSX.utils.book_new();
+                    
+                    // Sample data for the template
+                    const wsData = [
+                        ["Date", "Project ID", "Work Description", "Location", "Work Completed (%)", "Labor Count", "Materials Used", "Issues/Remarks"],
+                        ["2024-01-01", "PRJ-001", "Excavation", "Site A", "25", "10", "Excavator, Shovels", "No issues"],
+                        ["2024-01-02", "PRJ-001", "Pipe Laying", "Site A", "40", "8", "Pipes, Cement", "Rain delay"],
+                        ["2024-01-03", "PRJ-001", "Backfilling", "Site A", "60", "6", "Gravel, Sand", "None"]
+                    ];
+                    
+                    // Create worksheet
+                    const ws = XLSX.utils.aoa_to_sheet(wsData);
+                    
+                    // Add worksheet to workbook
+                    XLSX.utils.book_append_sheet(wb, ws, "DPR");
+                    
+                    // Generate Excel file
+                    XLSX.writeFile(wb, "DPR_Template.xlsx");
+                    
+                    showAlert('Template downloaded successfully!', 'success');
+                } catch (error) {
+                    console.error('Error generating template:', error);
+                    showAlert('Error generating template. Please try again.', 'danger');
+                }
+            });
+
+            // Load recent uploads on page load
+            function loadRecentUploads() {
+                fetch('/api/uploads/dpr')
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.uploads && data.uploads.length > 0) {
+                            // Clear "No recent uploads" message if it exists
+                            const noUploadsMsg = recentUploads.querySelector('.text-muted.text-center');
+                            if (noUploadsMsg) {
+                                recentUploads.removeChild(noUploadsMsg);
+                            }
+                            
+                            // Add each upload to the list
+                            data.uploads.forEach(upload => {
+                                addToRecentUploads(upload);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading recent uploads:', error);
+                        // Don't show error to user if it's just a 404 (no uploads yet)
+                        if (error.message !== 'Network response was not ok' || !recentUploads.querySelector('.text-muted.text-center')) {
+                            showAlert('Error loading recent uploads', 'danger');
+                        }
+                    });
+            }
+
+            // Initialize
+            loadRecentUploads();
+        });
+    </script>
+</body>
+</html>

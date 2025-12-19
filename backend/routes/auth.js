@@ -3,22 +3,10 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { User } = require('../models/User');
 
-// Set CORS headers for all auth routes
-router.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5000');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header('Access-Control-Allow-Credentials', true);
-  next();
-});
-
-// Handle preflight requests
-router.options('*', (req, res) => {
-  res.sendStatus(200);
-});
+// CORS is already handled at the app level in server.js
 
 // Logout route
-router.post('/api/logout', (req, res) => {
+router.post('/logout', (req, res) => {
   try {
     // In a real app, you might want to invalidate the token on the server side
     // For now, we'll just return success and let the client handle token removal
@@ -30,7 +18,7 @@ router.post('/api/logout', (req, res) => {
 });
 
 // Login route
-router.post('/api/login', async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Excel - Urban Storm Water Drainage Scheme</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles/header-footer.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <style>
+        .upload-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        .upload-area:hover {
+            border-color: #1a5276;
+            background: #f8f9fa;
+        }
+        .upload-area i {
+            font-size: 3rem;
+            color: #1a5276;
+            margin-bottom: 1rem;
+        }
+        .file-info {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .btn-upload {
+            background: #1a5276;
+            color: white;
+            padding: 0.5rem 2rem;
+            border-radius: 5px;
+            border: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-upload:hover {
+            background: #154360;
+            transform: translateY(-2px);
+        }
+        .file-list {
+            margin-top: 2rem;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .file-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="container-fluid">
+            <div class="header-container">
+                <div class="logo-container">
+                    <img src="/public/Images/LOGO .jpg" alt="Uttar Pradesh Government Logo">
+                    <div class="site-title">
+                        <h1>Urban Storm Water Drainage Scheme</h1>
+                    </div>
+                </div>
+
+                <nav class="main-nav">
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="dashboard.html" class="nav-link">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active">Upload Data <i class="fas fa-chevron-down"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">Reports</a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="user-menu">
+                    <a href="#" id="directLogout" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                    
+                    <div class="user-avatar" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="d-flex align-items-center user-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span>Admin</span>
+                        <i class="fas fa-chevron-down ms-1"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-main py-4">
+        <div class="container-fluid">
+            <div class="upload-container">
+                <h2 class="mb-4"><i class="fas fa-file-excel me-2"></i>Upload Excel File</h2>
+                
+                <div class="upload-area" id="dropZone">
+                    <i class="fas fa-file-upload"></i>
+                    <h5>Drag & Drop your Excel file here</h5>
+                    <p class="text-muted">or</p>
+                    <button class="btn btn-primary" id="browseBtn">Browse Files</button>
+                    <input type="file" id="fileInput" accept=".xlsx, .xls" hidden>
+                    <div class="file-info" id="fileInfo">No file selected</div>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <button class="btn-upload" id="uploadBtn" disabled>
+                            <i class="fas fa-upload me-2"></i>Upload File
+                        </button>
+                        <button class="btn btn-outline-secondary ms-2" id="resetBtn">
+                            <i class="fas fa-redo me-1"></i> Reset
+                        </button>
+                    </div>
+                    <div>
+                        <a href="/templates/sample-upload.xlsx" class="btn btn-link" download>
+                            <i class="fas fa-file-download me-1"></i>Download Template
+                        </a>
+                    </div>
+                </div>
+
+                <div class="file-list mt-4" id="fileList">
+                    <h5 class="mb-3">Recent Uploads</h5>
+                    <div class="list-group" id="uploadedFiles">
+                        <!-- Files will be listed here -->
+                        <div class="text-muted text-center py-3" id="noFiles">No files uploaded yet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <!-- Footer content from dashboard.html -->
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Urban Storm Water Drainage Scheme, Uttar Pradesh. All Rights Reserved.</p>
+                <p>Designed & Developed by Urban Development Department, Government of Uttar Pradesh</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+            const browseBtn = document.getElementById('browseBtn');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const fileInfo = document.getElementById('fileInfo');
+            const uploadedFiles = document.getElementById('uploadedFiles');
+            const noFiles = document.getElementById('noFiles');
+            
+            let selectedFile = null;
+
+            // Handle drag and drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                dropZone.style.borderColor = '#1a5276';
+                dropZone.style.backgroundColor = 'rgba(26, 82, 118, 0.05)';
+            }
+
+            function unhighlight() {
+                dropZone.style.borderColor = '#ddd';
+                dropZone.style.backgroundColor = '#f8f9fa';
+            }
+
+            // Handle dropped files
+            dropZone.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+
+            // Handle file selection via browse button
+            browseBtn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+            // Handle file processing
+            function handleFiles(files) {
+                if (files.length > 0) {
+                    selectedFile = files[0];
+                    fileInfo.textContent = `Selected: ${selectedFile.name} (${formatFileSize(selectedFile.size)})`;
+                    uploadBtn.disabled = false;
+                }
+            }
+
+            // Format file size
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            // Upload file
+            uploadBtn.addEventListener('click', async () => {
+                if (!selectedFile) return;
+
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+
+                // Show loading state
+                const originalText = uploadBtn.innerHTML;
+                uploadBtn.disabled = true;
+                uploadBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Uploading...';
+
+                try {
+                    // Replace with your actual API endpoint
+                    const response = await fetch('/api/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        addFileToList(selectedFile.name, result);
+                        showAlert('File uploaded successfully!', 'success');
+                        resetForm();
+                    } else {
+                        throw new Error('Upload failed');
+                    }
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    showAlert('Error uploading file. Please try again.', 'danger');
+                } finally {
+                    uploadBtn.innerHTML = originalText;
+                    uploadBtn.disabled = false;
+                }
+            });
+
+            // Reset form
+            resetBtn.addEventListener('click', resetForm);
+
+            function resetForm() {
+                fileInput.value = '';
+                selectedFile = null;
+                fileInfo.textContent = 'No file selected';
+                uploadBtn.disabled = true;
+                unhighlight();
+            }
+
+            // Add file to recent uploads list
+            function addFileToList(filename, data) {
+                if (noFiles) noFiles.style.display = 'none';
+                
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div>
+                        <i class="fas fa-file-excel text-success me-2"></i>
+                        <span>${filename}</span>
+                        <small class="text-muted ms-2">${new Date().toLocaleString()}</small>
+                    </div>
+                    <div>
+                        <span class="badge bg-success">Processed</span>
+                        <button class="btn btn-sm btn-link text-primary" onclick="viewFile('${filename}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                `;
+                
+                if (uploadedFiles.firstChild) {
+                    uploadedFiles.insertBefore(fileItem, uploadedFiles.firstChild);
+                } else {
+                    uploadedFiles.appendChild(fileItem);
+                }
+            }
+
+            // Show alert message
+            function showAlert(message, type) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+                alertDiv.role = 'alert';
+                alertDiv.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                
+                const container = document.querySelector('.upload-container');
+                container.insertBefore(alertDiv, container.firstChild);
+                
+                // Auto-dismiss after 5 seconds
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 5000);
+            }
+
+            // View file function (to be implemented)
+            window.viewFile = function(filename) {
+                alert(`Viewing file: ${filename}`);
+                // Implement file viewing logic here
+            };
+        });
+    </script>
+</body>
+</html>

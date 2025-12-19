@@ -1,0 +1,56 @@
+DPR Template for Urban Storm Water Drainage Scheme
+
+Project Information:
+Project Name,Urban Storm Water Drainage Scheme
+Location,City, State
+Reporting Period,DD/MM/YYYY to DD/MM/YYYY
+Prepared By,Name
+Designation,Role
+Date,DD/MM/YYYY
+
+Daily Progress Summary:
+Date,Work Description,Location,Planned Qty,Completed Qty,Unit,Progress (%),Remarks
+DD/MM/2023,Excavation for Storm Water Drain,Zone A,100,50,Cum,50,On track
+DD/MM/2023,Laying of RCC Pipes,Zone A,500,200,RM,40,Delayed due to rain
+DD/MM/2023,Backfilling,Zone B,300,150,Cum,50,In progress
+
+Manpower Details:
+Date,Skilled Workers,Unskilled Workers,Supervisors,Engineers,Total
+DD/MM/2023,15,30,2,1,48
+DD/MM/2023,12,25,2,1,40
+
+Equipment Details:
+Date,Equipment Type,Number of Units,Hours Worked,Status,Remarks
+DD/MM/2023,Excavator,2,16,Good Working Condition,-
+DD/MM/2023,Dump Truck,4,32,Good Working Condition,-
+
+Material Details:
+Date,Material,Unit,Planned,Used,Balance,Remarks
+DD/MM/2023,Cement,Bags,1000,500,500,As per requirement
+DD/MM/2023,Coarse Aggregate,Cum,500,200,300,-
+
+Issues & Challenges:
+Date,Issue,Impact,Action Taken,Status,Responsible Person
+DD/MM/2023,Heavy Rain,Work Stoppage,Work suspended,Resolved,Site Engineer
+DD/MM/2023,Material Shortage,Delay in work,Alternative supplier arranged,In Progress,Store Incharge
+
+Safety Observations:
+Date,Observation,Corrective Action,Status,Remarks
+DD/MM/2023,Workers not wearing safety harness,Strict instructions given,Resolved,-
+DD/MM/2023,Uncovered excavation,Barricaded the area,Resolved,-
+
+Quality Checks:
+Date,Check Point,Specification,Actual,Status,Remarks
+DD/MM/2023,Concrete Slump Test,75-100mm,85mm,Passed,-
+DD/MM/2023,Compaction Test,95% MDD,97% MDD,Passed,-
+
+Photographic Documentation:
+Date,Location,Description,Photo Reference
+DD/MM/2023,Zone A,Excavation in progress,IMG_001.jpg
+DD/MM/2023,Zone B,Pipe laying completed,IMG_002.jpg
+
+Notes:
+1. All quantities should be in standard units
+2. Update the progress daily
+3. Report any issues immediately
+4. Attach supporting documents if any
